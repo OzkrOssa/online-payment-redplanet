@@ -3,10 +3,10 @@ import {create} from 'zustand';
 
 type SubscriberState = {
   subscriber: SmartISPSubscriber | null;
-  setSubscriber: (subscriber: SmartISPSubscriber) => void;
+  setSubscriber: (subscriber: SmartISPSubscriber| null) => void;
   fetchSubscriberByDni: (dni: string) => Promise<void>;
   invoice: SmartISPInvoice | null;
-  setInvoice: (invoice: SmartISPInvoice) => void;
+  setInvoice: (invoice: SmartISPInvoice | null) => void;
 };
 
 export const useSmartISPStore = create<SubscriberState>((set) => ({
