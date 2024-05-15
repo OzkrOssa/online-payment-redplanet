@@ -1,3 +1,4 @@
+import { TabsComponent } from "@/components/tabs/tabs-component";
 import Image from "next/image";
 
 export default function Home() {
@@ -11,7 +12,7 @@ export default function Home() {
           </div>
 
           {/* Tabs */}
-          
+          <TabsComponent />          
         </div>
         <div className="hidden md:block absolute inset-0 items-center justify-center md:static md:w-1/2">
           <Image src="/laptop.png" alt="laptop" width={700} height={500} />
