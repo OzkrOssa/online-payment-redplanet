@@ -1,3 +1,4 @@
+import PayMethods from "@/components/pay-methods/pay-methods";
 import { TabsComponent } from "@/components/tabs/tabs-component";
 import Image from "next/image";
 
@@ -12,7 +13,9 @@ export default function Home() {
           </div>
 
           {/* Tabs */}
-          <TabsComponent />          
+          <TabsComponent />
+          {/* Pay Methods */}
+          <PayMethods />
         </div>
         <div className="hidden md:block absolute inset-0 items-center justify-center md:static md:w-1/2">
           <Image src="/laptop.png" alt="laptop" width={700} height={500} />
