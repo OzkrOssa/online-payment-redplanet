@@ -1,9 +1,13 @@
-import { SmartISPInvoice, SmartISPSubscriber } from '@/types/smartisp';
-import {create} from 'zustand';
+import {
+  SmartISPInvoice,
+  SmartISPSubscriber,
+  SmartISPSubscriberResponse,
+} from "@/types/smartisp";
+import { create } from "zustand";
 
 type SubscriberState = {
-  subscriber: SmartISPSubscriber | null;
-  setSubscriber: (subscriber: SmartISPSubscriber| null) => void;
+  subscriber: SmartISPSubscriberResponse | null;
+  setSubscriber: (subscriber: SmartISPSubscriberResponse | null) => void;
   fetchSubscriberByDni: (dni: string) => Promise<void>;
   invoice: SmartISPInvoice | null;
   setInvoice: (invoice: SmartISPInvoice | null) => void;
@@ -16,20 +20,44 @@ export const useSmartISPStore = create<SubscriberState>((set) => ({
     const url = `http://194.140.197.189/api/SmartIPS-v1/get-user/${dni}`;
     try {
       const response = await fetch(url, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json'
-        }
+          "Content-Type": "application/json",
+        },
       });
       if (!response.ok) {
-        throw new Error(`Error fetching subscriber: ${response.statusText}`);
+        console.log("error", response.status);
       }
-      const fetchedSubscriber: SmartISPSubscriber = await response.json();
-      set({ subscriber: fetchedSubscriber });
+
+      const fetchedSubscriber = await response.json();
+      if (fetchedSubscriber.success==false) {
+        set({
+          subscriber: {
+            type: "error",
+            data: fetchedSubscriber,
+          },
+        });
+        return
+      }
+      if(fetchedSubscriber.user) {
+        set({
+          subscriber: {
+            type: "subscriber",
+            data: fetchedSubscriber,
+          },
+        });
+        return
+      }
+      
     } catch (error) {
-      console.error('Fetch error:', error);
+      set({
+        subscriber: {
+          type: "error",
+          data: { success: false, message: `fetch error` },
+        },
+      });
     }
   },
   invoice: null,
-  setInvoice: (invoice) => set({ invoice })
+  setInvoice: (invoice) => set({ invoice }),
 }));

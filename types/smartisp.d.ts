@@ -94,3 +94,7 @@ export type SmartISPPaymentResponse = {
   success: boolean;
   message: string;
 };
+
+export type SmartISPSubscriberResponse = 
+  | { type: 'subscriber'; data: SmartISPSubscriber }
+  | { type: 'error'; data: SmartISPPaymentResponse };
