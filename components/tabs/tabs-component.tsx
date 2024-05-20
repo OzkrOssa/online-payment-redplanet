@@ -22,63 +22,66 @@ export function TabsComponent() {
 
   const handleChange = (value: string) => {
     const invoice: SmartISPInvoice = JSON.parse(value);
-    setInvoice(invoice)
+    setInvoice(invoice);
   };
 
   return (
     <Tabs defaultValue="document" className="w-[400px]">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="document">
-          Documento
-        </TabsTrigger>
-        <TabsTrigger value="invoice">
-          Factura
-        </TabsTrigger>
+        <TabsTrigger value="document">Documento</TabsTrigger>
+        <TabsTrigger value="invoice">Factura</TabsTrigger>
       </TabsList>
       <TabsContent value="document">
-        {subscriber ? (
+        {subscriber?.type == "subscriber" ? (
           <Card>
             <CardHeader>
               <CardTitle>Facturas</CardTitle>
               <CardDescription>
-                {subscriber.user.name} - {subscriber.user.dni}
+                {subscriber.data.user.name} - {subscriber.data.user.dni}
               </CardDescription>
             </CardHeader>
             <CardContent>
-            <RadioGroup onValueChange={handleChange}>
-            {subscriber.user.invoices
-              .filter((invoice) => invoice.status !== 1)
-              .map((invoice) => {
-                return (
-                  <div
-                    key={invoice.id}
-                    className="flex items-center space-x-2 bg-gray-100 rounded-lg p-4 shadow-md text-sm"
-                  >
-                    <RadioGroupItem
-                      value={JSON.stringify(invoice)}
-                      id={invoice.num_bill}
-                    />
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
-                        <p className="text-gray-600">Número de Factura:</p>
-                        <p className="font-semibold">{invoice.num_bill}</p>
+              <RadioGroup onValueChange={handleChange}>
+                {subscriber.data.user.invoices
+                  .filter((invoice) => invoice.status !== 1)
+                  .map((invoice) => {
+                    return (
+                      <div
+                        key={invoice.id}
+                        className="flex items-center space-x-2 bg-gray-100 rounded-lg p-4 shadow-md text-sm"
+                      >
+                        <RadioGroupItem
+                          value={JSON.stringify(invoice)}
+                          id={invoice.num_bill}
+                        />
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <p className="text-gray-600">Número de Factura:</p>
+                            <p className="font-semibold">{invoice.num_bill}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Total a Pagar:</p>
+                            <p className="font-semibold">
+                              ${invoice.total_pay}
+                            </p>
+                          </div>
+                          <div>
+                            <p className="text-gray-600">Pagar Antes:</p>
+                            <p className="font-semibold">
+                              {invoice.expiration_date}
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-gray-600">Total a Pagar:</p>
-                        <p className="font-semibold">${invoice.total_pay}</p>
-                      </div>
-                      <div>
-                        <p className="text-gray-600">Pagar Antes:</p>
-                        <p className="font-semibold">
-                          {invoice.expiration_date}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-              <Button className="bg-[#5e1774]" onClick={() => setSubscriber(null)}>Realizar otra busqueda</Button>
-          </RadioGroup>
+                    );
+                  })}
+                <Button
+                  className="bg-[#5e1774]"
+                  onClick={() => setSubscriber(null)}
+                >
+                  Realizar otra busqueda
+                </Button>
+              </RadioGroup>
             </CardContent>
           </Card>
         ) : (

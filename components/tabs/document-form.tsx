@@ -23,8 +23,11 @@ export default function DocumentForm() {
     defaultValues: { document: "" },
   });
 
-  const fetchSubscriberByDni = useSmartISPStore((state) => state.fetchSubscriberByDni);
-
+  const subscriber = useSmartISPStore((state) => state.subscriber);
+  const fetchSubscriberByDni = useSmartISPStore(
+    (state) => state.fetchSubscriberByDni
+  );
+  console.log(process.env.MY_VARIABLE);
   const onSubmit = (values: any) => {
     fetchSubscriberByDni(values.document);
     form.reset();
@@ -42,10 +45,17 @@ export default function DocumentForm() {
                 <Input placeholder="1018250916" {...field} />
               </FormControl>
               <FormMessage />
+              {subscriber?.type == "error" && (
+                <p className="text-red-500 text-sm font-medium">
+                  No se encontro el usuario
+                </p>
+              )}
             </FormItem>
           )}
         />
-        <Button type="submit" className="bg-[#5e1774]">Buscar</Button>
+        <Button type="submit" className="bg-[#5e1774]">
+          Buscar
+        </Button>
       </form>
     </Form>
   );
