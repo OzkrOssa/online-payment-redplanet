@@ -27,7 +27,7 @@ export default function DocumentForm() {
   const fetchSubscriberByDni = useSmartISPStore(
     (state) => state.fetchSubscriberByDni
   );
-  console.log(process.env.MY_VARIABLE);
+  
   const onSubmit = (values: any) => {
     fetchSubscriberByDni(values.document);
     form.reset();
