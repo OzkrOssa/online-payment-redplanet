@@ -2,6 +2,7 @@
 import { useSmartISPStore } from "@/stores/smartisp-store";
 import React from "react";
 import PayU from "./pay-u";
+import Card from "./card";
 
 export default function PayMethods() {
   const invoice = useSmartISPStore((state) => state.invoice);
@@ -15,6 +16,7 @@ export default function PayMethods() {
             {/* PayU Component */}
             <PayU />
             {/* Card Component */}
+            <Card />
             {/* Pse Component */}
           </div>
         </div>
