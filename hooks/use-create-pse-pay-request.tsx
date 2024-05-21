@@ -8,6 +8,7 @@ import useIpAddress from "./use-ip-address";
 export default function useCreatePsePaymentRequest() {
   const { ipAddress } = useIpAddress();
   const { subscriber, invoice } = useSmartISPStore((state) => state);
+  const [response, setResponse] = React.useState<any>(null);
 
   const createPsePaymentRequest = async (
     data: z.infer<typeof PseFormSchema>
@@ -32,7 +33,7 @@ export default function useCreatePsePaymentRequest() {
             account_bank_code: "1051",
           },
           user: {
-            name: "Red Planet",
+            name: data.org_account_username,
             type: data.user_type,
             type_fis_number: data.user_type_fis_number,
             fiscal_number: data.org_account_nit,
@@ -42,32 +43,38 @@ export default function useCreatePsePaymentRequest() {
             transactions: [
               {
                 application_code: "DV-REDPNETPSEH-STG-CO-LTP",
-                amount: (Number(invoice?.total_pay) / 3).toString(),
-                vat: invoice?.iva,
+                amount: Math.floor(Number(invoice?.total_pay) / 3),
+                vat: 0.0,
               },
               {
                 application_code: "DV-REDPNETPSEH2-STG-CO-LTP",
-                amount: (Number(invoice?.total_pay) / 3).toString(),
-                vat: invoice?.iva,
+                amount: Math.floor(Number(invoice?.total_pay) / 3),
+                vat: 0.0,
               },
               {
                 application_code: "DV-REDPNETPSEH3-STG-CO-LTP",
-                amount: (Number(invoice?.total_pay) / 3).toString(),
-                vat: invoice?.iva,
+                amount: Math.floor(Number(invoice?.total_pay) / 3),
+                vat: 0.0,
               },
             ],
           },
         },
       },
       user: {
-        id: `${subscriber?.type === "subscriber" ? subscriber?.data.user.id : ""}`,
-        email: `${subscriber?.type === "subscriber" ? subscriber?.data.user.email : ""}`,
-        phone_number: `${subscriber?.type === "subscriber" ? subscriber?.data.user.phone : ""}`,
+        id: `${
+          subscriber?.type === "subscriber" ? subscriber?.data.user.id : ""
+        }`,
+        email: `${
+          subscriber?.type === "subscriber" ? subscriber?.data.user.email : ""
+        }`,
+        phone_number: `${
+          subscriber?.type === "subscriber" ? subscriber?.data.user.phone : ""
+        }`,
       },
       order: {
         dev_reference: invoice?.num_bill,
-        amount: Number(invoice?.total_pay),
-        vat: invoice?.iva,
+        amount: Math.floor(Number(invoice?.total_pay)),
+        vat: 0.0,
         description: `Pago factura #${invoice?.num_bill}`,
       },
     };
@@ -85,14 +92,14 @@ export default function useCreatePsePaymentRequest() {
 
       if (!request.ok) {
         console.error("Failed to create PSE payment request:", request);
-      } else {
-        const responseData = await request.json();
-        console.log("PSE payment request successful:", responseData);
       }
+      const responseData = await request.json();
+      setResponse(responseData)
+      console.log("PSE payment request created successfully:", responseData);
     } catch (error) {
       console.error("Error creating PSE payment request:", error);
     }
   };
 
-  return { createPsePaymentRequest };
+  return { response, createPsePaymentRequest };
 }
