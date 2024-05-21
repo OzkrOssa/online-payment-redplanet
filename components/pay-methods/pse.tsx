@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,17 +13,27 @@ import * as Form from "@/components/ui/form";
 import { identificationOptions } from "@/lib/constants";
 import { PseFormSchema } from "@/types/pse";
 import useCreatePsePaymentRequest from "@/hooks/use-create-pse-pay-request";
+import { useSmartISPStore } from "@/stores/smartisp-store";
 
 export default function Pse() {
   const [showModal, setShowModal] = React.useState(false);
   const { banks } = useBankList();
-  console.log(banks)
-
+  const subscriber = useSmartISPStore((state) => state.subscriber);
   const form = useForm<z.infer<typeof PseFormSchema>>({
     resolver: zodResolver(PseFormSchema),
   });
 
-  const { createPsePaymentRequest } = useCreatePsePaymentRequest();
+  const { response, createPsePaymentRequest } = useCreatePsePaymentRequest();
+
+  React.useEffect(() => {
+    // Verifica si response existe y su estado es "pending"
+    if (
+      response &&
+      response.transaction.status === "pending"
+    ) {
+      window.location.href = response.transaction.bank_url;
+    }
+  }, [response]);
 
   async function onSubmit(data: z.infer<typeof PseFormSchema>) {
     createPsePaymentRequest(data);
@@ -36,17 +46,19 @@ export default function Pse() {
   };
 
   return (
-    <>
-      <Button className="bg-transparent w-30 h-16" variant={"ghost"}>
-        <Image
-          src="/pse.png"
-          alt="Pse"
-          width={100}
-          height={150}
-          className="w-full h-full"
-          onClick={handleClick}
-        />
-      </Button>
+    <React.Fragment>
+      {subscriber?.type == "subscriber" && (
+        <Button className="bg-transparent w-30 h-16" variant={"ghost"}>
+          <Image
+            src="/pse.png"
+            alt="Pse"
+            width={100}
+            height={150}
+            className="w-full h-full"
+            onClick={handleClick}
+          />
+        </Button>
+      )}
       {showModal && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -257,6 +269,6 @@ export default function Pse() {
           </div>
         </div>
       )}
-    </>
+    </React.Fragment>
   );
 }
